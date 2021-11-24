@@ -1,0 +1,34 @@
+<idea-plugin>
+    <id>yy-dev-tools</id>
+    <name>YY Dev Tools</name>
+    <vendor email="278013157@qq.com" url="http://www.google.com">Yiyi.org</vendor>
+
+    <description>
+        <![CDATA[
+        欢迎使用YY Dev Tools！<br/>
+        本插件目前版本提供的功能：<br/>
+        <ul>
+            <li>Gwt rpcAsync类中的方法直接跳转至controller对应方法，快捷键即“进入方法实现类”的快捷键: eclipse为Ctrl+T; idea为Ctrl+Alt+鼠标左键</li>
+            <li>Gwt controller中的方法找到对应rpcAsync类被调用的地方，快捷键即一般方法查找调用处的快捷键: eclipse为Ctrl+G, 或Ctrl+鼠标左键; idea为Alt+F7, 或Ctrl+鼠标左键</li>
+        </ul>
+        ]]>
+    </description>
+
+    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
+
+    <actions>
+        <unregister id="GotoImplementation"/>
+        <action id="GotoImplementation" class="org.yiyi.GWTGotoImplementationAction" >
+            <override-text place="MainMenu"/>
+            <override-text place="EditorPopup" use-text-of-place="MainMenu"/>
+        </action>
+    </actions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <methodReferencesSearch implementation="org.yiyi.GWTMethodUsagesSearcher"/>
+    </extensions>
+
+</idea-plugin>
