@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'org.yiyi'
-version '1.0.0'
+version '2020.0.0'
 
 repositories {
     mavenCentral()
@@ -17,14 +17,14 @@ dependencies {
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    version '2020.3.3'
+    version '2020.1.1'
     plugins = ['java']
 }
 patchPluginXml {
     changeNotes """
         <h4>2021.11.24</h4>
         <ul>
-            <li>GWT rpcAsync与controller对应方法跳转功能</li>
+            <li>GWT rpcAsync go to GWT controller implementation, and controller find async usages</li>
         </ul>
     """
 }

@@ -38,6 +38,7 @@ import com.intellij.codeInsight.navigation.BackgroundUpdaterTask;
 import com.intellij.codeInsight.navigation.GotoImplementationHandler;
 import com.intellij.codeInsight.navigation.ImplementationSearcher;
 import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.psi.ElementDescriptionUtil;
@@ -120,7 +121,8 @@ public class GWTGotoImplementationHandler extends GotoImplementationHandler {
         }
         final PsiReference reference = refTemp;
         final TargetElementUtil instance = TargetElementUtil.getInstance();
-        PsiElement[] targets = new ImplementationSearcher.FirstImplementationsSearcher() {
+        PsiElement[] targets = GWTGotoImplementationHandler.searchImplementations (editor, source, offset,
+                new ImplementationSearcher.FirstImplementationsSearcher() {
             @Override
             protected boolean accept(PsiElement element) {
                 if (reference != null && !reference.getElement().isValid()) return false;
@@ -131,11 +133,10 @@ public class GWTGotoImplementationHandler extends GotoImplementationHandler {
             protected boolean canShowPopupWithOneItem(PsiElement element) {
                 return false;
             }
-        }.searchImplementations(editor, source, offset);
+        });
         if (targets == null) {
             //canceled search
             GotoData data = new GotoData(source, PsiElement.EMPTY_ARRAY, Collections.emptyList());
-            data.isCanceled = true;
             return data;
         }
         GotoData gotoData = new GotoData(source, targets, Collections.emptyList());
@@ -150,6 +151,12 @@ public class GWTGotoImplementationHandler extends GotoImplementationHandler {
             }
         };
         return gotoData;
+    }
+
+    static PsiElement @Nullable [] searchImplementations(Editor editor, PsiElement element, int offset, ImplementationSearcher implementationSearcher) {
+        TargetElementUtil targetElementUtil = TargetElementUtil.getInstance();
+        boolean onRef = ReadAction.compute(() -> targetElementUtil.findTargetElement(editor, ImplementationSearcher.getFlags() & ~(TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED | TargetElementUtil.LOOKUP_ITEM_ACCEPTED), offset) == null);
+        return implementationSearcher.searchImplementations(element, editor, onRef && ReadAction.compute(() -> element == null || targetElementUtil.includeSelfInGotoImplementation(element)), onRef);
     }
 
     private class ImplementationsUpdaterTask extends BackgroundUpdaterTask {
@@ -182,7 +189,8 @@ public class GWTGotoImplementationHandler extends GotoImplementationHandler {
                     return;
                 }
             }
-            new ImplementationSearcher.BackgroundableImplementationSearcher() {
+            GWTGotoImplementationHandler.searchImplementations (myEditor, myGotoData.source, myOffset,
+                    new ImplementationSearcher.BackgroundableImplementationSearcher() {
                 @Override
                 protected void processElement(PsiElement element) {
                     indicator.checkCanceled();
@@ -193,7 +201,7 @@ public class GWTGotoImplementationHandler extends GotoImplementationHandler {
                         }
                     }
                 }
-            }.searchImplementations(myEditor, myGotoData.source, myOffset);
+            });
         }
 
         @Override
