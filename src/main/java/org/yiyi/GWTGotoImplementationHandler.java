@@ -41,6 +41,8 @@ import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.FileIndexFacade;
 import com.intellij.psi.ElementDescriptionUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -49,6 +51,7 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.PsiClassImpl;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.usageView.UsageViewShortNameLocation;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -165,16 +168,12 @@ public class GWTGotoImplementationHandler extends GotoImplementationHandler {
         private final GotoData myGotoData;
         private final PsiReference myReference;
 
-        // due to javac bug: java.lang.ClassFormatError: Illegal field name "com.intellij.codeInsight.navigation.GotoImplementationHandler$this" in class com/intellij/codeInsight/navigation/GotoImplementationHandler$ImplementationsUpdaterTask
-        @SuppressWarnings("Convert2Lambda")
         ImplementationsUpdaterTask(@NotNull GotoData gotoData, @NotNull Editor editor, int offset, final PsiReference reference) {
-            super(gotoData.source.getProject(), ImplementationSearcher.getSearchingForImplementations(),
-                    createComparatorWrapper(Comparator.comparing(new Function <PsiElement, Comparable> () {
-                        @Override
-                        public Comparable apply(PsiElement e1) {
-                            return getRenderer(e1, gotoData).getComparingObject(e1);
-                        }
-                    })));
+            super(
+                    gotoData.source.getProject(),
+                    ImplementationSearcher.getSearchingForImplementations(),
+                    createImplementationComparator(gotoData)
+            );
             myEditor = editor;
             myOffset = offset;
             myGotoData = gotoData;
@@ -189,8 +188,7 @@ public class GWTGotoImplementationHandler extends GotoImplementationHandler {
                     return;
                 }
             }
-            GWTGotoImplementationHandler.searchImplementations (myEditor, myGotoData.source, myOffset,
-                    new ImplementationSearcher.BackgroundableImplementationSearcher() {
+            new ImplementationSearcher.BackgroundableImplementationSearcher() {
                 @Override
                 protected void processElement(PsiElement element) {
                     indicator.checkCanceled();
@@ -201,7 +199,7 @@ public class GWTGotoImplementationHandler extends GotoImplementationHandler {
                         }
                     }
                 }
-            });
+            }.searchImplementations(myEditor, myGotoData.source, myOffset);
         }
 
         @Override
@@ -209,5 +207,22 @@ public class GWTGotoImplementationHandler extends GotoImplementationHandler {
             String name = ElementDescriptionUtil.getElementDescription(myGotoData.source, UsageViewShortNameLocation.INSTANCE);
             return getChooserTitle(myGotoData.source, name, size, isFinished());
         }
+    }
+
+    private static @NotNull Comparator<PsiElement> createImplementationComparator(@NotNull GotoData gotoData) {
+        Comparator<PsiElement> projectContentComparator = projectElementsFirst(gotoData.source.getProject());
+        Comparator<PsiElement> presentationComparator = Comparator.comparing(element -> gotoData.getComparingObject(element));
+        Comparator<PsiElement> positionComparator = PsiUtilCore::compareElementsByPosition;
+        Comparator<PsiElement> result = projectContentComparator.thenComparing(presentationComparator).thenComparing(positionComparator);
+        return wrapIntoReadAction(result);
+    }
+
+    public static @NotNull Comparator<PsiElement> projectElementsFirst(@NotNull Project project) {
+        FileIndexFacade index = FileIndexFacade.getInstance(project);
+        return Comparator.comparing((PsiElement element) -> index.isInContent(element.getContainingFile().getVirtualFile())).reversed();
+    }
+
+    private static <T> @NotNull Comparator<T> wrapIntoReadAction(@NotNull Comparator<T> base) {
+        return (e1, e2) -> ReadAction.compute(() -> base.compare(e1, e2));
     }
 }

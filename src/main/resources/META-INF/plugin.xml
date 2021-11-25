@@ -1,9 +1,7 @@
 <idea-plugin>
     <id>yy-dev-tools</id>
     <name>YY Dev Tools</name>
-    <vendor email="278013157@qq.com" url="http://www.google.com">Yiyi.org</vendor>
-
-    <idea-version since-build="191" until-build="213.*"/>
+    <vendor email="278013157@qq.com" url="https://github.com/JohnsonEEE">Yiyi.org</vendor>
 
     <description>
         <![CDATA[
