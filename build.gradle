@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'org.yiyi'
-version '1.0.0'
+version '2021.0.1'
 
 repositories {
     mavenCentral()
@@ -17,11 +17,11 @@ dependencies {
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    version '2020.1.1'
+    version '2021.1'
     plugins = ['java']
 }
 patchPluginXml {
-    sinceBuild '191'
+    sinceBuild '211'
     untilBuild '213.*'
     changeNotes """
         <h4>2021.11.24</h4>

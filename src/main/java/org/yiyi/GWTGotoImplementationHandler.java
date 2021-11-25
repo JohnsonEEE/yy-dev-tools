@@ -101,7 +101,7 @@ public class GWTGotoImplementationHandler extends GotoImplementationHandler {
         return createDataForSource(editor, offset, source);
     }
 
-    private @NotNull GotoData createDataForSource(@NotNull Editor editor, int offset, PsiElement source) {
+    protected @NotNull GotoData createDataForSource(@NotNull Editor editor, int offset, PsiElement source) {
         PsiReference refTemp = TargetElementUtil.findReference(editor, offset);
         if (refTemp != null) {
             PsiElement pe = refTemp.resolve ();
