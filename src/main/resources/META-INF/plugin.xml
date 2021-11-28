@@ -7,7 +7,9 @@
 
     <description>
         <![CDATA[
-        A useful plugin developed by YY!<br/>
+        A useful plugin developed by YY!<br/><br/>
+        This is a plugin developed to improve development efficiency and simplify development operations. The current version mainly optimizes GWT-related development operations, such as code navigation. I developed this plugin out of my desire to improve programming efficiency, my curiosity about idea platform, and my love for technology. The implementation is bound to have flaws, and there may be better "wheels" in existence, but it still doesn't stop me from developing this plugin with enthusiasm. lol~<br/>
+
         Features：<br/>
         <ul>
             <li>Methods of GWT rpcAsync class can directly navigate to corresponding methods of GWT controller, just like "Go To Implementation"</li>
