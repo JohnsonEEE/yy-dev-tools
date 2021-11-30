@@ -1,20 +1,17 @@
 <idea-plugin>
     <id>yy-dev-tools</id>
     <name>YY Dev Tools</name>
-    <vendor email="278013157@qq.com" url="http://www.google.com">Yiyi.org</vendor>
-
-    <idea-version since-build="191" until-build="213.*"/>
+    <vendor email="278013157@qq.com" url="https://github.com/JohnsonEEE">Yiyi.org</vendor>
 
     <description>
         <![CDATA[
-        A useful plugin developed by YY!<br/><br/>
-        This is a plugin developed to improve development efficiency and simplify development operations. The current version mainly optimizes GWT-related development operations, such as code navigation. I developed this plugin out of my desire to improve programming efficiency, my curiosity about idea platform, and my love for technology. The implementation is bound to have flaws, and there may be better "wheels" in existence, but it still doesn't stop me from developing this plugin with enthusiasm. lol~<br/>
-
+        A plugin for improving GWT-related project development efficiency and simplifying some operations, such as code navigation.<br/><br/>
         Features：<br/>
         <ul>
             <li>Methods of GWT rpcAsync class can directly navigate to corresponding methods of GWT controller, just like "Go To Implementation"</li>
             <li>Methods of GWT controller can find corresponding async methods usages in all GWT rpcAsync classes, just like "Find Usages"</li>
         </ul>
+        More features beyond GWT-related project may be developed in the future.
         ]]>
     </description>
 
