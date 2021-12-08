@@ -6,10 +6,16 @@
     <description>
         <![CDATA[
         A plugin for improving GWT-related project development efficiency and simplifying some operations, such as code navigation.<br/><br/>
-        Features：<br/>
+        Features:<br/>
         <ul>
             <li>Methods of GWT rpcAsync class can directly navigate to corresponding methods of GWT controller, just like "Go To Implementation"</li>
             <li>Methods of GWT controller can find corresponding async methods usages in all GWT rpcAsync classes, just like "Find Usages"</li>
+        </ul>
+        Usage instructions:<br/>
+        <ul>
+            <li>Install it, no configuration needed</li>
+            <li>"Ctrl + Mouse left click" on caller of rpcAsync methods to go to method implementation in GWT controller</li>
+            <li>"Ctrl + Mouse left click" on implementation of GWT controller methods to find all usages of the methods that declared in rpcAsync class</li>
         </ul>
         More features beyond GWT-related project may be developed in the future.
         ]]>
